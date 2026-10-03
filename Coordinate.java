@@ -8,14 +8,14 @@ public class Coordinate {
     }
 
     public int row() {
-
+        return row;
     }
 
     public int col() {
-
+        return col;
     }
 
-    public boolean equals(Object) {
-
+    public boolean equals(Coordinate c) {
+        return row == c.row() && col == c.col();
     }
 }
