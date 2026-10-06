@@ -70,14 +70,24 @@ public class Maze {
     }
 
     public Object clone() {
-
+        Maze copy = new Maze(rows, cols);
+        for (int r = 0; r < rows; r++) {
+            for (int c = 0; c < cols; c++) {
+                char point = this.getPoint(r, c);
+                copy.setPoint(r, c, point);
+            }
+        }
+        return copy;
     }
 
     public String toString() {
 
     }
 
-    public void visualPath() {
-        
+    public void visualizePath(Path p) {
+        Maze copy = this.clone();
+        for (Coordinate c : p) {
+            copy.setPoint(c.row(), c.col(), '*');
+        }
     }
 }
