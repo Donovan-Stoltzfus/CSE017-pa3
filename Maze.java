@@ -54,19 +54,83 @@ public class Maze {
     }
 
     public Path findPath(Coordinate start, Coordinate end) {
-
+        Path path = new Path();
+        boolean[] visited = new boolean[rows][cols];
+        return findPath(start, end, path, visited);
     }
 
     public boolean findPath(Coordinate current, Coordinate end, Path currentPath, boolean[][] visited) {
-
+        if (!this.isValid(current)) {
+            return false;
+        }
+        if (current.equals("#")) {
+            return false;
+        }
+        if (visited[current.row()][current.col()]) {
+            return false;
+        }
+        if (current.equals(end)) {
+            currentPath.add(current);
+            return true;
+        }
+        boolean[current.row()][current.col()] = true;
+        Coordinate nextCurrent = new Coordinate(current.row(), current.col() + 1);
+        if (findPath(nextCurrent, end, currentPath, visited)) {
+            return true;
+        }
+        nextCurrent = new Coordinate(current.row(), current.col() - 1);
+        if (findPath(nextCurrent, end, currentPath, visited)) {
+            return true;
+        }
+        nextCurrent = new Coordinate(current.row() - 1, current.col());
+        if (findPath(nextCurrent, end, currentPath, visited)) {
+            return true;
+        }
+        nextCurrent = new Coordinate(current.row() + 1, current.col());
+        if (findPath(nextCurrent, end, currentPath, visited)) {
+            return true;
+        }
+        currentPath.remove(current);
+        visited[current.row(), current.col()] = false;
+        return false;
     }
 
     public Paths findAllPaths(Coordinate start, Coordinate end) {
-
+        Path path = new Path();
+        Paths paths = new Paths();
+        boolean[] visited = new boolean[rows][cols];
+        return findAllPaths(start, end, path, paths, visited);
     }
 
     public void findAllPaths(Coordinate current, Coordinate end, Path currentPath, Paths paths, boolean[][] visited) {
-
+        //base cases - current position is not valid, #, visited, or ending location
+        if (!this.isValid(current)) {
+            return;
+        }
+        if (current.equals("#")) {
+            return;
+        }
+        if (visited[current.row()][current.col()]) {
+            return;
+        }
+        if (current.equals(end)) {
+            currentPath.add(current);
+            visited[current.row(), current.col()] = true;
+            paths.add(currentPath);
+        }
+        //recursive calls to left, right, up, down
+        Coordinate nextCurrent = new Coordinate(current.row(), current.col() + 1);
+        findAllPaths(nextCurrent, end, currentPath, paths, visited);
+        nextCurrent = new Coordinate(current.row(), current.col() - 1);
+        findAllPaths(nextCurrent, end, currentPath, paths, visited);
+        nextCurrent = new Coordinate(current.row() - 1, current.col());
+        findAllPaths(nextCurrent, end, currentPath, paths, visited);
+        nextCurrent = new Coordinate(current.row() + 1, current.col());
+        findAllPaths(nextCurrent, end, currentPath, paths, visited);
+        //remove current coordinate and reset visited status so other paths can use its coordinate
+        currentPath.remove(current);
+        visited[current.row()][current.col()] = false;
+        return;
     }
 
     public Object clone() {
@@ -81,7 +145,12 @@ public class Maze {
     }
 
     public String toString() {
-
+        for (int r = 0; r < rows; r++) {
+            for (int c = 0; c < cols; c++) {
+                System.out.print(this.getPoint(r, c) + "  ");
+            }
+            System.out.println();
+        }
     }
 
     public void visualizePath(Path p) {
