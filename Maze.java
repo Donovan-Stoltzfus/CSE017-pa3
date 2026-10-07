@@ -46,7 +46,7 @@ public class Maze {
     public boolean isValid(Coordinate c) {
         int row = c.row();
         int col = c.col();
-        if (row > rows || row < 0 || col > cols || col < 0) {
+        if (row >= rows || row < 0 || col >= cols || col < 0) {
             return false;
         } else {
             return true;
@@ -54,6 +54,7 @@ public class Maze {
     }
 
     public Path findPath(Coordinate start, Coordinate end) {
+        recursions = 0;
         Path path = new Path();
         boolean[][] visited = new boolean[rows][cols];
         findPath(start, end, path, visited);
@@ -61,11 +62,11 @@ public class Maze {
     }
 
     public boolean findPath(Coordinate current, Coordinate end, Path currentPath, boolean[][] visited) {
-        //recursions++;
+        recursions++;
         if (!this.isValid(current)) {
             return false;
         }
-        if (current.equals("#")) {
+        if (maze[current.row()][current.col()] == '#') {
             return false;
         }
         if (visited[current.row()][current.col()]) {
@@ -76,6 +77,7 @@ public class Maze {
             return true;
         }
         visited[current.row()][current.col()] = true;
+        currentPath.add(current);
         Coordinate nextCurrent = new Coordinate(current.row(), current.col() + 1);
         if (findPath(nextCurrent, end, currentPath, visited)) {
             return true;
@@ -98,6 +100,7 @@ public class Maze {
     }
 
     public Paths findAllPaths(Coordinate start, Coordinate end) {
+        recursions = 0;
         Path path = new Path();
         Paths paths = new Paths();
         boolean[][] visited = new boolean[rows][cols];
@@ -107,10 +110,11 @@ public class Maze {
 
     public void findAllPaths(Coordinate current, Coordinate end, Path currentPath, Paths paths, boolean[][] visited) {
         //base cases - current position is not valid, #, visited, or ending location
+        recursions++;
         if (!this.isValid(current)) {
             return;
         }
-        if (current.equals("#")) {
+        if (maze[current.row()][current.col()] == '#') {
             return;
         }
         if (visited[current.row()][current.col()]) {
@@ -119,8 +123,13 @@ public class Maze {
         if (current.equals(end)) {
             currentPath.add(current);
             visited[current.row()][current.col()] = true;
-            paths.add(currentPath);
+            paths.add((Path)currentPath.clone());
+            currentPath.remove(current);
+            visited[current.row()][current.col()] = false;
+            return;
         }
+        visited[current.row()][current.col()] = true;
+        currentPath.add(current);
         //recursive calls to left, right, up, down
         Coordinate nextCurrent = new Coordinate(current.row(), current.col() + 1);
         findAllPaths(nextCurrent, end, currentPath, paths, visited);
@@ -148,7 +157,7 @@ public class Maze {
     }
 
     public String toString() {
-        String formatted = "";
+        String formatted = "Maze with solution path\n";
         for (int r = 0; r < rows; r++) {
             for (int c = 0; c < cols; c++) {
                 formatted += this.getPoint(r, c) + "  ";
@@ -160,9 +169,10 @@ public class Maze {
 
     public void visualizePath(Path p) {
         Maze copy = (Maze) this.clone();
-        for (int i = 0; i < p.size(); i++) {
+        for (int i = 1; i < p.size() - 1; i++) {
             Coordinate c = p.get(i);
             copy.setPoint(c.row(), c.col(), '*');
         }
+        System.out.println(copy.toString());
     }
 }
