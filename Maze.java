@@ -1,19 +1,39 @@
 import java.util.Scanner;
 import java.io.File;
 import java.io.FileNotFoundException;
-
+/**
+ * Represents a Maze with start, end, walls
+ */
 public class Maze {
+    /**
+     * maze stores identity of every coordinate in map
+     */
     private char[][] maze;
+    /**
+     * rows, cols to represent size of maze
+     */
     private int rows;
     private int cols;
+    /**
+     * static recursions to represent number of times recursive methods are called
+     */
     protected static long recursions;
 
+    /**
+     * Constructor with two parameters
+     * @param rs represents rows in maze
+     * @param cs represents cols in maze
+     */
     public Maze(int rs, int cs) {
         rows = rs;
         cols = cs;
         maze = new char[rs][cs];
     }
 
+    /**
+     * Reads maze from file
+     * @param filename to be read
+     */
     public void load(String filename) {
         try {
             File file = new File(filename);
@@ -29,6 +49,12 @@ public class Maze {
         }
     }
 
+    /**
+     * Accessor for identity of point in maze
+     * @param row of coordinate to be accessed
+     * @param col of coordinate to be accessed
+     * @return char stored in maze array at row, col
+     */
     public char getPoint(int row, int col) {
         if (row > rows || row < 0 || col > cols || col < 0) {
             throw new ArrayIndexOutOfBoundsException();
@@ -36,6 +62,12 @@ public class Maze {
         return maze[row][col];
     }
 
+    /**
+     * Mutator for character in maze
+     * @param row of coordinate to be changed
+     * @param col of coordinate to be changed
+     * @param c character to be added
+     */
     public void setPoint(int row, int col, char c) {
         if (row > rows || row < 0 || col > cols || col < 0) {
             throw new ArrayIndexOutOfBoundsException();
@@ -43,6 +75,11 @@ public class Maze {
         maze[row][col] = c;
     }
 
+    /**
+     * Checks if coordinate is in maze
+     * @param c Coordinate to be checked
+     * @return boolean representing if Coordinate is valid
+     */
     public boolean isValid(Coordinate c) {
         int row = c.row();
         int col = c.col();
@@ -53,6 +90,12 @@ public class Maze {
         }
     }
 
+    /**
+     * Method to find a possible path from start to end of maze
+     * @param start represents beginning location on maze
+     * @param end represents ending location on maze
+     * @return Path object representing path from start to finish
+     */
     public Path findPath(Coordinate start, Coordinate end) {
         recursions = 0;
         Path path = new Path();
@@ -61,6 +104,14 @@ public class Maze {
         return path;
     }
 
+    /**
+     * Recursive method to search for path from start to end of maze
+     * @param current represents current location in maze
+     * @param end represents ending location on maze
+     * @param currentPath represents Path object with visited Coordinates
+     * @param visited stores visited coordinates in maze
+     * @return boolean representing if Coordinate is valid or not
+     */
     public boolean findPath(Coordinate current, Coordinate end, Path currentPath, boolean[][] visited) {
         recursions++;
         if (!this.isValid(current)) {
@@ -99,6 +150,12 @@ public class Maze {
         return false;
     }
 
+    /**
+     * Method to find all possible paths from start to end of maze
+     * @param start represents beginning location on maze
+     * @param end represents ending location on maze
+     * @return Paths object storing all possible Path objects
+     */
     public Paths findAllPaths(Coordinate start, Coordinate end) {
         recursions = 0;
         Path path = new Path();
@@ -108,6 +165,15 @@ public class Maze {
         return paths;
     }
 
+    /**
+     * Recursive method to search for all possible paths from start to end of maze
+     * @param current represents current location in maze
+     * @param end represents ending location on maze
+     * @param currentPath represents current Path object, storing visited Coordinates
+     * @param paths stores all Path objects
+     * @param visited stores visited coordinates in maze
+     * @return boolean representing if Coordinate is valid or not
+     */
     public void findAllPaths(Coordinate current, Coordinate end, Path currentPath, Paths paths, boolean[][] visited) {
         //base cases - current position is not valid, #, visited, or ending location
         recursions++;
@@ -145,6 +211,10 @@ public class Maze {
         return;
     }
 
+    /**
+     * Cloning method to clone Maze object
+     * @return cloned Maze
+     */
     public Object clone() {
         Maze copy = new Maze(rows, cols);
         for (int r = 0; r < rows; r++) {
@@ -156,8 +226,11 @@ public class Maze {
         return copy;
     }
 
+    /**
+     * Accessor to print all coordinates in Maze
+     * @return formatted string with Maze info
+     */
     public String toString() {
-        String formatted = "Maze with solution path\n";
         for (int r = 0; r < rows; r++) {
             for (int c = 0; c < cols; c++) {
                 formatted += this.getPoint(r, c) + "  ";
@@ -167,12 +240,17 @@ public class Maze {
         return formatted;
     }
 
+    /**
+     * Prints path through the maze
+     * @param p path taken through maze
+     */
     public void visualizePath(Path p) {
         Maze copy = (Maze) this.clone();
         for (int i = 1; i < p.size() - 1; i++) {
             Coordinate c = p.get(i);
             copy.setPoint(c.row(), c.col(), '*');
         }
+        String formatted = "Maze with solution path\n";
         System.out.println(copy.toString());
     }
 }

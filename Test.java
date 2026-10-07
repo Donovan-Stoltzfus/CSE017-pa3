@@ -13,6 +13,7 @@ public class Test {
         else{
             maze.visualizePath(path);
         }
+        
         System.out.println("\nTest case 2: Finding all paths in a maze (5 x 5)");
         Paths paths = maze.findAllPaths(start, end);
         System.out.println("Number of recursions to find all paths: " + Maze.recursions);
