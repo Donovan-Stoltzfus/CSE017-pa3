@@ -6,7 +6,7 @@ public class Maze {
     private char[][] maze;
     private int rows;
     private int cols;
-    protected long recursions;
+    protected static long recursions;
 
     public Maze(int rs, int cs) {
         rows = rs;
@@ -31,14 +31,14 @@ public class Maze {
 
     public char getPoint(int row, int col) {
         if (row > rows || row < 0 || col > cols || col < 0) {
-            throw new ArrayIndexOutOfBoundsException;
+            throw new ArrayIndexOutOfBoundsException();
         }
         return maze[row][col];
     }
 
     public void setPoint(int row, int col, char c) {
         if (row > rows || row < 0 || col > cols || col < 0) {
-            throw new ArrayIndexOutOfBoundsException;
+            throw new ArrayIndexOutOfBoundsException();
         }
         maze[row][col] = c;
     }
@@ -55,11 +55,13 @@ public class Maze {
 
     public Path findPath(Coordinate start, Coordinate end) {
         Path path = new Path();
-        boolean[] visited = new boolean[rows][cols];
-        return findPath(start, end, path, visited);
+        boolean[][] visited = new boolean[rows][cols];
+        findPath(start, end, path, visited);
+        return path;
     }
 
     public boolean findPath(Coordinate current, Coordinate end, Path currentPath, boolean[][] visited) {
+        //recursions++;
         if (!this.isValid(current)) {
             return false;
         }
@@ -73,7 +75,7 @@ public class Maze {
             currentPath.add(current);
             return true;
         }
-        boolean[current.row()][current.col()] = true;
+        visited[current.row()][current.col()] = true;
         Coordinate nextCurrent = new Coordinate(current.row(), current.col() + 1);
         if (findPath(nextCurrent, end, currentPath, visited)) {
             return true;
@@ -91,15 +93,16 @@ public class Maze {
             return true;
         }
         currentPath.remove(current);
-        visited[current.row(), current.col()] = false;
+        visited[current.row()][current.col()] = false;
         return false;
     }
 
     public Paths findAllPaths(Coordinate start, Coordinate end) {
         Path path = new Path();
         Paths paths = new Paths();
-        boolean[] visited = new boolean[rows][cols];
-        return findAllPaths(start, end, path, paths, visited);
+        boolean[][] visited = new boolean[rows][cols];
+        findAllPaths(start, end, path, paths, visited);
+        return paths;
     }
 
     public void findAllPaths(Coordinate current, Coordinate end, Path currentPath, Paths paths, boolean[][] visited) {
@@ -115,7 +118,7 @@ public class Maze {
         }
         if (current.equals(end)) {
             currentPath.add(current);
-            visited[current.row(), current.col()] = true;
+            visited[current.row()][current.col()] = true;
             paths.add(currentPath);
         }
         //recursive calls to left, right, up, down
@@ -145,17 +148,20 @@ public class Maze {
     }
 
     public String toString() {
+        String formatted = "";
         for (int r = 0; r < rows; r++) {
             for (int c = 0; c < cols; c++) {
-                System.out.print(this.getPoint(r, c) + "  ");
+                formatted += this.getPoint(r, c) + "  ";
             }
-            System.out.println();
+            formatted += "\n";
         }
+        return formatted;
     }
 
     public void visualizePath(Path p) {
-        Maze copy = this.clone();
-        for (Coordinate c : p) {
+        Maze copy = (Maze) this.clone();
+        for (int i = 0; i < p.size(); i++) {
+            Coordinate c = p.get(i);
             copy.setPoint(c.row(), c.col(), '*');
         }
     }
