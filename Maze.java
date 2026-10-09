@@ -106,6 +106,8 @@ public class Maze {
 
     /**
      * Recursive method to search for path from start to end of maze
+     * Big O notation --> N^2
+     * Test case 5 results --> the upper bound seems is relatively low, and rises somewhat quickly
      * @param current represents current location in maze
      * @param end represents ending location on maze
      * @param currentPath represents Path object with visited Coordinates
@@ -167,6 +169,8 @@ public class Maze {
 
     /**
      * Recursive method to search for all possible paths from start to end of maze
+     * Big O notation --> N^4
+     * Test case 5 results --> the findAllPaths algorithms takes a significant number of iterations to find every possible path, and rises very rapidly as the maze gets bigger.
      * @param current represents current location in maze
      * @param end represents ending location on maze
      * @param currentPath represents current Path object, storing visited Coordinates
@@ -231,6 +235,7 @@ public class Maze {
      * @return formatted string with Maze info
      */
     public String toString() {
+        String formatted = "";
         for (int r = 0; r < rows; r++) {
             for (int c = 0; c < cols; c++) {
                 formatted += this.getPoint(r, c) + "  ";
@@ -250,7 +255,7 @@ public class Maze {
             Coordinate c = p.get(i);
             copy.setPoint(c.row(), c.col(), '*');
         }
-        String formatted = "Maze with solution path\n";
+        System.out.println("Maze with solution path\n");
         System.out.println(copy.toString());
     }
 }
